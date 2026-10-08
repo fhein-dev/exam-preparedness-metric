@@ -1,2 +1,6 @@
 # exam-preparedness-metric
-A simple HTML exam preparedness metric for the ISC2 CC exam that can be ran locally (can also be used as a template for other exams). It uses cross-domain quiz ouput and standard to high difficulty practice examination data to evaluate exam preparedness. This was made with the ISC2 CC in mind so no simulated laboratory questions are present. *yet
+A simple HTML exam preparedness metric that can be ran locally (can also be used as a template for other exams). It uses cross-domain quiz output and standard to high difficulty practice examination output to evaluate exam preparedness. This was made with the ISC2 CC exam in mind so no simulated laboratory questions are present. *yet
+
+**future plans**
+> simulated laboratory environment and performance based questions
+> availability for other common industry-recognized certifications
