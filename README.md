@@ -1,7 +1,5 @@
 # exam-preparedness-metric-builder
 
-A single-page, blank exam-prep template. Enter your own exam's domains, questions, glossary and sets, then practice and track how ready you are. It works for most exam, since nothing is pre-filled.
-
 ## How it runs
 
 The app is hosted locally on each device. There is no server, account or sign-in, and everything runs in the browser, so it also works without an internet connection. Your questions, glossary and progress are saved on that device only and are not shared or synced. To move to another device or keep a copy, use **Backup / new exam**.
