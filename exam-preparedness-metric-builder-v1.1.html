@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exam Preparedness Metric</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("epm_theme")||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<style>
+:root{box-sizing:border-box;color-scheme:dark;accent-color:var(--acc);--bg:#14171c;--card:#1b2027;--inp:#101318;--line:#2a313b;--fg:#d6dce4;--mut:#8b97a5;--acc:#7fb2d9;--ok:#7bc99a;--bad:#e8908a;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f1ec;--card:#fbfaf7;--inp:#fff;--line:#dcd8cf;--fg:#2a2f36;--mut:#62707d;--acc:#2f6f94;--ok:#2f7d52;--bad:#b04a43}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.55 Georgia,"Times New Roman",serif}
+main{max-width:640px;margin:0 auto;padding:20px 16px 110px}
+h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.1rem;margin:22px 0 6px}
+p.s,.rn{color:var(--mut);margin:.2em 0 1em;font-size:.9rem}
+button{font:inherit;cursor:pointer}
+.set,.o,.item{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0;color:var(--fg)}
+.set b,.item b{display:block;color:var(--acc)}
+.o.sel{border:2px solid var(--acc)}.o.ok{border:2px solid var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}.o.no{border:2px solid var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--card))}
+.bar,.rbar{height:6px;background:var(--line);border-radius:3px;margin:10px 0}
+.bar i,.rbar i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.q{font-size:1.1rem;margin:14px 0}
+.ex{background:var(--card);border-left:4px solid var(--acc);padding:10px 12px;margin:12px 0}
+.nx{background:var(--acc);color:var(--bg);border:0;border-radius:8px;padding:10px 16px;margin:6px 6px 0 0}
+.nx.alt{background:none;color:var(--acc);border:1px solid var(--acc)}.nx.del{background:var(--bad);color:var(--bg)}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-size:.9rem}
+.top button{background:none;border:0;color:var(--acc);padding:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;min-height:200px;cursor:pointer;margin:12px 0}
+.card h2{margin:.1em 0 .4em;font-size:1.3rem;color:var(--acc)}.lb{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:12px}
+.gs{width:100%;box-sizing:border-box;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--inp);color:var(--fg);margin:6px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row .gs{flex:1;min-width:0}
+details.rd{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:10px 0}details.rd summary{cursor:pointer}
+.big{font-size:1.6rem;color:var(--acc);font-weight:bold}
+label.ck{display:block;margin:6px 0;font-size:.95rem}
+.wm{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);z-index:10;font:13px/1.3 system-ui,sans-serif;color:var(--mut);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 11px;opacity:.92;text-decoration:none}.wm:hover{opacity:1;color:var(--acc)}
+.tg{position:fixed;left:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);z-index:10;font:600 14px/1.2 system-ui,sans-serif;color:var(--acc);background:var(--card);border:2px solid var(--acc);border-radius:999px;padding:9px 16px;box-shadow:0 2px 8px rgba(0,0,0,.3)}.tg:hover{background:var(--acc);color:var(--bg)}
+@media (max-width:430px){.tg{bottom:calc(env(safe-area-inset-bottom,0px) + 52px)}}
+</style></head><body><main id="app"></main><a class="wm" href="https://github.com/fhein-dev" target="_blank" rel="noopener noreferrer">made by https://github.com/fhein-dev</a><button class="tg" id="thm" onclick="toggleTheme()"></button>
+<script>
+const KEY="epm_v1",MIN=5,app=document.getElementById("app"),g=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function ask(m,fn){const d=document.createElement("div");d.className="mdl";d.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9";d.innerHTML='<div style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px;max-width:360px"><p style="margin-top:0">'+esc(m)+'</p></div>';const bx=d.firstChild,mk=(t,alt,f)=>{const b=document.createElement("button");b.className="nx"+(alt?" alt":"");b.textContent=t;b.onclick=()=>{d.remove();if(f)f()};bx.appendChild(b)};mk(fn?"Yes":"OK",0,fn);if(fn)mk("Cancel",1);document.body.appendChild(d)}
+const tell=m=>ask(m);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const blank=()=>({name:"",target:75,domains:[],terms:[],qs:[],sets:[],prog:{},srs:{},tsrs:{}});
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&v.domains&&v.qs)return Object.assign(blank(),v)}catch(e){}return blank()}
+let D=load(),V={p:"home"},st=null,GL=null;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
+function thLabel(){g("thm").textContent=document.documentElement.dataset.theme==="light"?"\u263E Dark mode":"\u2600 Light mode"}
+function toggleTheme(){const t=document.documentElement.dataset.theme==="light"?"dark":"light";document.documentElement.dataset.theme=t;try{localStorage.setItem("epm_theme",t)}catch(e){}thLabel()}
+thLabel();
+function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const Q=id=>D.qs.find(q=>q.id===id),dn=id=>(D.domains.find(d=>d.id===id)||{n:"No domain"}).n;
+const isId=q=>q.t==="id"||q.t==="fb",norm=s=>String(s).trim().toLowerCase().replace(/\s+/g," "),isOk=(q,j)=>j!=null&&(isId(q)?q.a.some(a=>norm(a)===norm(j)):q.t==="ms"?j.length===q.m.length&&q.m.every(i=>j.includes(i)):j===q.c),right=q=>isId(q)?q.a[0]+(q.a.length>1?" (also accepted: "+q.a.slice(1).join("; ")+")":""):q.t==="ms"?q.m.map(i=>q.o[i]).join("; "):q.o[q.c],show=(q,j)=>isId(q)?String(j).trim():q.t==="ms"?j.map(i=>q.o[i]).join("; "):q.o[j];
+const TL={id:"identification",fb:"fill in the blank",ms:"select all",tf:"true/false"},IV=[1,3,7,14,30];
+const dueQs=()=>D.qs.filter(q=>D.srs[q.id]&&D.srs[q.id].due<=Date.now()),dueTerms=()=>D.terms.filter(t=>D.tsrs[t.id]&&D.tsrs[t.id].due<=Date.now());
+function srs(M,id,ok){const b=ok?Math.min(((M[id]||{}).b||0)+1,5):0;M[id]={b,due:Date.now()+IV[Math.min(b,4)]*864e5}}
+const back=(p,l)=>`<div class="top"><button onclick="go('${p}')">&larr; ${l||"Back"}</button></div>`;
+function go(p,x){document.querySelectorAll(".mdl").forEach(e=>e.remove());V={p,x};({home,doms,qs,qedit,sets,sedit,gl,terms,tedit,bulk,backup,opts,quiz,done}[p])();scrollTo(0,0)}
+const domOpts=sel=>'<option value="">No domain</option>'+D.domains.map(d=>`<option value="${d.id}" ${d.id===sel?"selected":""}>${esc(d.n)}</option>`).join("");
+/* readiness */
+function ready(){const a={},o=D.prog;D.qs.forEach(q=>{const p=o[q.id];if(p&&q.d){const r=a[q.d]=a[q.d]||[0,0];r[0]+=p[0];r[1]++}});
+let ws=0,sc=0,weak=null;const acc={};D.domains.forEach(d=>{const r=a[d.id];if(r&&r[1]>=MIN){acc[d.id]=r[0]/r[1];const w=d.w||1;ws+=w;sc+=w*acc[d.id];if(weak===null||acc[d.id]<acc[weak])weak=d.id}});
+return{a,acc,weak,overall:ws?sc/ws:null,ans:D.qs.filter(q=>o[q.id]).length}}
+function readyHTML(){const r=ready(),T=D.target;let head,body="";
+if(r.overall===null)head="<b>Readiness:</b> not enough data yet";
+else{const p=r.overall*100;head=`<b>Readiness:</b> <span class="big">${Math.round(p)}%</span> ${p>=T?"On target":p>=T-10?"Almost there":"Keep building"}`}
+body+=`<p class="rn">Uses your latest answer to every question, weighted by domain weights (equal if none set). A domain needs ${MIN}+ answered questions to count. Your target is ${T}%. Review-mode attempts are not counted. This is an estimate, not a prediction.</p>`;
+D.domains.forEach(d=>{const a=r.acc[d.id],c=(r.a[d.id]||[0,0])[1];
+body+=`<div>${esc(d.n)}${d.w?" ("+d.w+"%)":""}</div><div class="rbar"><i style="width:${a==null?0:Math.round(a*100)}%"></i></div><div class="rn" style="margin-top:-6px">${a==null?"Not enough data yet":Math.round(a*100)+"% correct"} &middot; answered ${c}</div>`;});
+if(!D.domains.length)body+='<p>Add domains and questions to see your metric.</p>';
+if(r.weak!==null)body+=`<p><b>Weakest domain:</b> ${esc(dn(r.weak))}. Review its flashcards and quiz next.</p>`;
+body+=`<p class="rn">Coverage: ${r.ans} of ${D.qs.length} questions answered.</p><button class="nx alt" onclick="resetProg()">Reset progress</button>`;
+return`<details class="rd"><summary>${head}</summary>${body}</details>`}
+function resetProg(){ask("Reset all saved progress?",()=>{D.prog={};D.srs={};D.tsrs={};save();go(V.p)})}
+/* home */
+function dqBtns(){return D.domains.filter(d=>D.qs.some(q=>q.d===d.id)).map(d=>`<button class="nx" onclick="startDom('${d.id}')">${esc(d.n)} quiz (${D.qs.filter(q=>q.d===d.id).length})</button>`).join("")}
+function home(){const ss=D.sets.filter(s=>s.q.some(Q)),dq=dqBtns(),wk=ready().weak,nq=dueQs().length,nt=dueTerms().length,sm=nq||nt||wk!==null||D.terms.length>=4;
+app.innerHTML=`<h1>Exam Preparedness Metric</h1><input class="gs" placeholder="Exam name (e.g. your certification)" value="${esc(D.name)}" oninput="D.name=this.value;save()"><p class="s">Build your own question sets, glossary and domains, then track how ready you are.</p>`+readyHTML()+
+(D.qs.length?"":'<div class="ex"><b>Start here:</b> 1) add your exam domains, 2) add questions and glossary terms, 3) group questions into sets.</div>')+
+(D.qs.length||D.terms.length?"<h2>Practice</h2>":"")+
+ss.map(s=>`<button class="set" onclick="startSet('${s.id}')"><b>${esc(s.n)}</b>${s.q.filter(Q).length} questions${s.d?" &middot; "+esc(s.d):""}</button>`).join("")+
+(D.qs.length?`<button class="set" onclick="startSet('_all')"><b>All questions</b>${D.qs.length} questions mixed</button>`:"")+
+(D.terms.length?`<button class="set" onclick="go('gl')"><b>Glossary flashcards</b>${D.terms.length} terms, filter by domain</button>`:"")+
+(sm?'<h2>Smart practice</h2><p class="rn">Questions you answer in Test mode come back on a schedule: after 1 day if missed, then after 3, 7, 14 and 30 days as you keep getting them right.</p>':"")+
+(nq?`<button class="set" onclick="startDue()"><b>Due for review</b>${nq} question${nq===1?"":"s"} due now</button>`:"")+
+(nt?`<button class="set" onclick="go('gl','due')"><b>Flashcards due</b>${nt} term${nt===1?"":"s"} due now</button>`:"")+
+(wk!==null?`<button class="set" onclick="startWeak('${wk}')"><b>Practice my weakest domain</b>${esc(dn(wk))}</button>`:"")+
+(D.terms.length>=4?'<button class="set" onclick="startGloss()"><b>Glossary match quiz</b>Match meanings to terms, built from your glossary. Not counted in the metric.</button>':"")+
+(dq?`<h2>Per-domain tests</h2>${dq}`:"")+
+`<h2>Build your exam</h2><button class="nx" onclick="go('doms')">Domains</button><button class="nx" onclick="go('qs')">Questions</button><button class="nx" onclick="go('sets')">Sets</button><button class="nx" onclick="go('terms')">Glossary terms</button><button class="nx alt" onclick="go('backup')">Backup / new exam</button>`}
+/* domains */
+function doms(){const t=D.domains.reduce((a,d)=>a+(+d.w||0),0);
+app.innerHTML=back("home","Home")+`<h1>Domains</h1><p class="s">Name each exam domain and give its weight as a percent of the exam. Weights total ${t}%.</p>`+
+D.domains.map((d,i)=>`<div class="row"><input class="gs dn" placeholder="Domain name" value="${esc(d.n)}" oninput="sync()"><input class="gs dw" type="number" min="0" max="100" style="max-width:80px;flex:none" placeholder="%" value="${d.w||""}" oninput="sync()"><button class="nx del" onclick="delDom(${i})">Delete</button></div>`).join("")+
+`<button class="nx" onclick="addDom()">Add domain</button><h2>Target score</h2><div class="row"><input class="gs" id="tg" type="number" min="1" max="100" style="max-width:90px;flex:none" value="${D.target}" oninput="D.target=+this.value||75;save()"><span class="rn">% readiness you aim for</span></div>`}
+function sync(){const n=[...document.querySelectorAll(".dn")],w=[...document.querySelectorAll(".dw")];D.domains.forEach((d,i)=>{d.n=n[i].value;d.w=+w[i].value||0});save()}
+function addDom(){sync();D.domains.push({id:uid(),n:"",w:0});save();doms()}
+function delDom(i){const d=D.domains[i];ask("Delete this domain? Its questions and terms become unassigned.",()=>{D.qs.forEach(q=>{if(q.d===d.id)q.d=""});D.terms.forEach(t=>{if(t.d===d.id)t.d=""});D.domains.splice(i,1);save();doms()})}
+/* questions */
+function qs(){app.innerHTML=back("home","Home")+`<h1>Questions (${D.qs.length})</h1><button class="nx" onclick="go('qedit')">Add question</button>`+
+D.qs.map(q=>`<button class="item" onclick="go('qedit','${q.id}')"><b>${esc(q.q.slice(0,90))}${q.q.length>90?"…":""}</b>${esc(dn(q.d))}${TL[q.t]?" &middot; "+TL[q.t]:""}</button>`).join("")}
+function qedit(){const q=V.x?Q(V.x):{q:"",o:["","","",""],c:0,e:"",d:"",t:"",a:[],m:[]},O=q.o.slice(),m=q.m||[];while(O.length<6)O.push("");
+const T=[["","Multiple choice"],["ms","Select all that apply"],["tf","True / false"],["id","Identification (typed answer, not case sensitive)"],["fb","Fill in the blank (typed answer, not case sensitive)"]];
+app.innerHTML=back("qs")+`<h1>${V.x?"Edit":"Add"} question</h1><select id="qt" class="gs" onchange="qtype()">${T.map(([v,l])=>`<option value="${v}" ${(q.t||"")===v?"selected":""}>${l}</option>`).join("")}</select><textarea id="qp" class="gs" rows="3" placeholder="Question">${esc(q.q)}</textarea><div id="mcb">`+
+O.map((t,i)=>`<div class="row"><input type="radio" class="rc" name="c" value="${i}" ${q.c===i?"checked":""}><input type="checkbox" class="cc" ${m.includes(i)?"checked":""}><input class="gs qo" placeholder="Option ${i+1}${i<2?"":" (optional)"}" value="${esc(t)}"></div>`).join("")+
+`<p class="rn" id="mch"></p></div><div id="tfb"><label class="ck"><input type="radio" name="tf" value="0" ${q.t==="tf"&&q.c===0?"checked":""}> True</label><label class="ck"><input type="radio" name="tf" value="1" ${q.t==="tf"&&q.c===1?"checked":""}> False</label></div><div id="idb"><input id="qa" class="gs" placeholder="Correct answer" value="${esc((q.a||[]).join("; "))}"><p class="rn" id="idh"></p></div><select id="qd" class="gs">${domOpts(q.d)}</select><textarea id="qe" class="gs" rows="3" placeholder="Explanation: why the answer is right and the others are not">${esc(q.e)}</textarea>`+
+(D.sets.length?'<div class="lb">Add to sets</div>'+D.sets.map(s=>`<label class="ck"><input type="checkbox" class="ss" value="${s.id}" ${V.x&&s.q.includes(V.x)?"checked":""}> ${esc(s.n)}</label>`).join(""):"")+
+`<div><button class="nx" onclick="saveQ()">Save</button>${V.x?'<button class="nx del" onclick="delQ()">Delete</button>':""}</div>`;qtype()}
+function qtype(){const t=g("qt").value,ms=t==="ms";g("mcb").style.display=t===""||ms?"":"none";g("tfb").style.display=t==="tf"?"":"none";g("idb").style.display=t==="id"||t==="fb"?"":"none";
+document.querySelectorAll(".rc").forEach(e=>e.style.display=ms?"none":"");document.querySelectorAll(".cc").forEach(e=>e.style.display=ms?"":"none");
+g("mch").textContent=ms?"Tick every correct option. At least two options are needed.":"Tick the radio button beside the correct option. At least two options are needed.";
+g("idh").textContent=(t==="fb"?"Write the question with ____ where the blank goes. ":"")+"To accept more than one answer, separate them with a semicolon. The first is shown as the correct answer. Capital letters and extra spaces are ignored when checking."}
+function saveQ(){const text=g("qp").value.trim(),t=g("qt").value,typed=t==="id"||t==="fb",o=[],m=[];let c=-1,a=[];
+if(typed)a=g("qa").value.split(";").map(x=>x.trim()).filter(Boolean);
+else if(t==="tf"){const r=document.querySelector("input[name=tf]:checked");o.push("True","False");c=r?+r.value:-1}
+else{const ci=+(document.querySelector("input[name=c]:checked")||{value:-1}).value,cc=document.querySelectorAll(".cc");[...document.querySelectorAll(".qo")].forEach((el,i)=>{const x=el.value.trim();if(x){if(t==="ms"){if(cc[i].checked)m.push(o.length)}else if(i===ci)c=o.length;o.push(x)}})}
+const bad=!text?"Enter the question.":typed?(!a.length?"Enter at least one correct answer.":t==="fb"&&!text.includes("____")?"Put ____ in the question where the blank goes.":""):t==="tf"?(c<0?"Choose True or False.":""):o.length<2?"Enter at least two options.":t==="ms"?(m.length?"":"Tick at least one correct option."):(c<0?"Mark a correct option that has text.":"");
+if(bad)return tell(bad);
+let q=V.x&&Q(V.x);if(!q){q={id:uid()};D.qs.push(q)}
+Object.assign(q,{q:text,t,a,o,c,m,e:g("qe").value.trim(),d:g("qd").value});
+const on=[...document.querySelectorAll(".ss:checked")].map(x=>x.value);
+D.sets.forEach(s=>{s.q=s.q.filter(i=>i!==q.id);if(on.includes(s.id))s.q.push(q.id)});save();go("qs")}
+function delQ(){ask("Delete this question?",()=>{D.qs=D.qs.filter(q=>q.id!==V.x);D.sets.forEach(s=>s.q=s.q.filter(i=>i!==V.x));delete D.prog[V.x];delete D.srs[V.x];save();go("qs")})}
+/* sets */
+function sets(){app.innerHTML=back("home","Home")+`<h1>Sets (${D.sets.length})</h1><button class="nx" onclick="go('sedit')">Add set</button>`+
+D.sets.map(s=>`<button class="item" onclick="go('sedit','${s.id}')"><b>${esc(s.n||"Untitled set")}</b>${s.q.filter(Q).length} questions</button>`).join("")}
+function sedit(){const s=V.x?D.sets.find(x=>x.id===V.x):{n:"",d:"",q:[]};
+app.innerHTML=back("sets")+`<h1>${V.x?"Edit":"Add"} set</h1><input id="sn" class="gs" placeholder="Set name (e.g. Practice exam 1)" value="${esc(s.n)}"><input id="sd" class="gs" placeholder="Short description (optional)" value="${esc(s.d)}"><div class="lb">Questions in this set</div>`+
+(D.qs.length?D.qs.map(q=>`<label class="ck"><input type="checkbox" class="sq" value="${q.id}" ${s.q.includes(q.id)?"checked":""}> ${esc(q.q.slice(0,80))} <span class="rn">(${esc(dn(q.d))})</span></label>`).join(""):'<p class="rn">Add questions first, then tick them here.</p>')+
+`<div><button class="nx" onclick="saveS()">Save</button>${V.x?'<button class="nx del" onclick="delS()">Delete</button>':""}</div>`}
+function saveS(){const n=g("sn").value.trim();if(!n)return tell("Give the set a name.");let s=V.x&&D.sets.find(x=>x.id===V.x);if(!s){s={id:uid()};D.sets.push(s)}
+Object.assign(s,{n,d:g("sd").value.trim(),q:[...document.querySelectorAll(".sq:checked")].map(x=>x.value)});save();go("sets")}
+function delS(){ask("Delete this set? Its questions are kept.",()=>{D.sets=D.sets.filter(s=>s.id!==V.x);save();go("sets")})}
+/* glossary manage */
+function terms(){app.innerHTML=back("home","Home")+`<h1>Glossary terms (${D.terms.length})</h1><button class="nx" onclick="go('tedit')">Add term</button><button class="nx alt" onclick="go('bulk')">Bulk add</button>`+
+D.terms.map(t=>`<button class="item" onclick="go('tedit','${t.id}')"><b>${esc(t.t)}</b>${esc(dn(t.d))}${t.s?"":" &middot; no scenario yet"}</button>`).join("")}
+function tedit(){const t=V.x?D.terms.find(x=>x.id===V.x):{t:"",m:"",s:"",d:""};
+app.innerHTML=back("terms")+`<h1>${V.x?"Edit":"Add"} term</h1><input id="tt" class="gs" placeholder="Term" value="${esc(t.t)}"><textarea id="tm" class="gs" rows="3" placeholder="Meaning">${esc(t.m)}</textarea><textarea id="ts" class="gs" rows="3" placeholder="Scenario or example (optional)">${esc(t.s)}</textarea><select id="td" class="gs">${domOpts(t.d)}</select><div><button class="nx" onclick="saveT()">Save</button>${V.x?'<button class="nx del" onclick="delT()">Delete</button>':""}</div>`}
+function saveT(){const t=g("tt").value.trim(),m=g("tm").value.trim();if(!t||!m)return tell("Enter the term and its meaning.");let o=V.x&&D.terms.find(x=>x.id===V.x);if(!o){o={id:uid()};D.terms.push(o)}
+Object.assign(o,{t,m,s:g("ts").value.trim(),d:g("td").value});save();go("terms")}
+function delT(){ask("Delete this term?",()=>{D.terms=D.terms.filter(t=>t.id!==V.x);delete D.tsrs[V.x];save();go("terms")})}
+/* bulk add */
+let BK=[];
+function bulk(){app.innerHTML=back("terms")+`<h1>Bulk add terms</h1><p class="s">Write each entry as <b>Term &gt; meaning</b> (a + with spaces around it also works). Put one entry per line, or separate entries with commas. Commas inside a meaning are fine. All entries go into the domain you pick, and you can add scenarios later by editing each term.</p><select id="bd" class="gs">${domOpts("")}</select><textarea id="bt" class="gs" rows="9" placeholder="Adequate Security > Security must be set at the same magnitude of harm a breach can cause.,"></textarea><button class="nx" onclick="bkPrev()">Preview</button><div id="bp"></div>`}
+function bkParse(txt){const out=[],bad=[];txt.split(/\n/).forEach(line=>{let cur=null;line.split(",").forEach(tok=>{const m=tok.match(/^\s*([^>+]{1,80}?)\s+[>+]\s+([\s\S]+)$/)||tok.match(/^\s*([^>+]{1,80}?)\s*>\s*([\s\S]+)$/);
+if(m){cur={t:m[1].trim(),m:m[2].trim()};out.push(cur)}else if(cur)cur.m+=","+tok;else if(tok.trim())bad.push(tok.trim())})});
+out.forEach(o=>o.m=o.m.replace(/[\s,]+$/,"").trim());return{out:out.filter(o=>o.t&&o.m),bad}}
+function bkPrev(){const r=bkParse(g("bt").value),seen=new Set(D.terms.map(t=>t.t.toLowerCase()));BK=r.out.filter(o=>{const k=o.t.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});const dup=r.out.length-BK.length;
+g("bp").innerHTML=`<p class="rn">${BK.length} new term${BK.length===1?"":"s"} found`+(dup?`, ${dup} skipped because the term already exists`:"")+(r.bad.length?`, ${r.bad.length} piece${r.bad.length===1?"":"s"} not understood (no > or +): ${esc(r.bad.join(" | ").slice(0,120))}`:"")+".</p>"+BK.map(o=>`<div class="ex"><b>${esc(o.t)}</b><br>${esc(o.m)}</div>`).join("")+(BK.length?`<button class="nx" onclick="bkAdd()">Add ${BK.length} term${BK.length===1?"":"s"}</button>`:"")}
+function bkAdd(){const d=g("bd").value;BK.forEach(o=>D.terms.push({id:uid(),t:o.t,m:o.m,s:"",d}));save();go("terms")}
+/* flashcards */
+function glBuild(){const m=GL.mode,t=GL.q;const du=m==="due"?new Set(dueTerms().map(x=>x.id)):null;let L=D.terms.filter(x=>(m==="a"||m==="g"||(du?du.has(x.id):x.d===m))&&(x.t+" "+x.m).toLowerCase().includes(t));
+if(m==="g"){const o=D.domains.map(d=>d.id);const r=x=>{const i=o.indexOf(x.d);return i<0?o.length:i};L.sort((a,b)=>r(a)-r(b))}GL.list=L;GL.i=0;GL.flip=false}
+function gl(){GL={mode:V.x||"a",q:"",list:[],i:0,flip:false};const dq=dqBtns();
+app.innerHTML=`<div class="top"><button onclick="go('home')">&larr; Home</button><span id="gn"></span></div><select class="gs" onchange="GL.mode=this.value;glBuild();card()"><option value="due" ${GL.mode==="due"?"selected":""}>Due for review (${dueTerms().length})</option><option value="a" ${GL.mode==="a"?"selected":""}>All terms (${D.terms.length})</option><option value="g">All terms, grouped by domain</option>${D.domains.map(d=>`<option value="${d.id}">${esc(d.n)} (${D.terms.filter(t=>t.d===d.id).length})</option>`).join("")}</select><input class="gs" placeholder="Search terms or meanings" oninput="GL.q=this.value.toLowerCase();glBuild();card()"><div id="gc"></div><button class="nx alt" onclick="startGloss(GL.list)">Match quiz on this list</button>`+(dq?`<h2>Domain quizzes</h2>${dq}`:"");glBuild();card()}
+function card(){const L=GL.list,c=g("gc");g("gn").textContent=L.length?(GL.i+1)+" of "+L.length:"0 results";
+if(!L.length){c.innerHTML=GL.mode==="due"?'<p class="s">All caught up. No flashcards are due right now.</p>':'<p class="s">No matching terms. Add terms from the Glossary terms page.</p>';return}
+const x=L[GL.i];c.innerHTML=`<div class="card" onclick="flipC()"><div class="lb">${esc(dn(x.d))}</div><h2>${esc(x.t)}</h2>`+(GL.flip?`<div class="lb">Meaning</div><p>${esc(x.m)}</p>`+(x.s?`<div class="lb">Scenario</div><p>${esc(x.s)}</p>`:""):'<p class="rn">Tap the card to see the meaning.</p>')+`</div><div class="row"><button class="nx" onclick="stepC(-1)">Prev</button><button class="nx" onclick="flipC()">Flip</button><button class="nx" onclick="stepC(1)">Next</button><button class="nx alt" onclick="GL.list=shuf(GL.list);GL.i=0;GL.flip=false;card()">Shuffle</button></div>`+(GL.flip?'<div class="row"><button class="nx alt" onclick="rate(0)">Still learning</button><button class="nx" onclick="rate(1)">Knew it</button></div>':"")}
+function rate(ok){const x=GL.list[GL.i];srs(D.tsrs,x.id,ok);save();if(GL.mode==="due"){GL.list.splice(GL.i,1);if(GL.i>=GL.list.length)GL.i=0;GL.flip=false;card()}else stepC(1)}
+function flipC(){GL.flip=!GL.flip;card()}function stepC(n){GL.i=(GL.i+n+GL.list.length)%GL.list.length;GL.flip=false;card()}
+/* quizzes */
+let BO=null,TI=null;
+function startSet(id){const s=id==="_all"?{n:"All questions",q:D.qs.map(q=>q.id)}:D.sets.find(x=>x.id===id);begin(s.q.map(Q).filter(Boolean),s.n,"home")}
+function startDom(id){begin(D.qs.filter(q=>q.d===id),dn(id)+" quiz",V.p==="gl"?"gl":"home")}
+function begin(list,n,bk){if(!list.length)return tell("This set has no questions yet.");BO={list,n,bk};go("opts")}
+function opts(){const N=BO.list.length;
+app.innerHTML=back(BO.bk)+`<h1>${esc(BO.n)}</h1><p class="s">${N} question${N===1?"":"s"} available.</p><div class="lb">Mode</div><label class="ck"><input type="radio" name="md" value="t" checked> Test: answers are shown at the end, no explanations, counts toward your readiness metric</label><label class="ck"><input type="radio" name="md" value="r"> Review: shows the correct answer and explanation after each question, does not count toward the metric</label><div class="lb">Number of questions</div><input id="ol" class="gs" type="number" min="1" max="${N}" value="${N}"><div class="lb">Timer in minutes (0 for no timer)</div><input id="om" class="gs" type="number" min="0" value="0"><button class="nx" onclick="runOpts()">Start</button>`}
+function runOpts(){const N=BO.list.length,len=Math.max(1,Math.min(N,+g("ol").value||N)),min=Math.max(0,+g("om").value||0),rv=document.querySelector("input[name=md]:checked").value==="r";
+run({list:BO.list,n:BO.n,len,min,review:rv,bk:BO.bk})}
+function run(o){clearT();st={o,qs:shuf(o.list).slice(0,o.len),n:o.n,review:o.review,bk:o.bk,end:o.min?Date.now()+o.min*60000:0,i:0,s:0,a:false,ans:[],up:false};if(st.end)TI=setInterval(tick,500);go("quiz")}
+function clearT(){if(TI){clearInterval(TI);TI=null}}
+function tfmt(){const r=Math.max(0,Math.ceil((st.end-Date.now())/1000));return Math.floor(r/60)+":"+String(r%60).padStart(2,"0")}
+function tick(){if(!st||V.p!=="quiz"){clearT();return}if(st.end-Date.now()<=0){clearT();st.up=true;go("done");return}const e=g("tm");if(e)e.textContent=tfmt()}
+function rec(q,ok){if(q.gen)return;D.prog[q.id]=[ok?1:0,Date.now()];srs(D.srs,q.id,ok);save()}
+function startDue(){begin(dueQs(),"Due for review","home")}
+function startWeak(id){begin(D.qs.filter(q=>q.d===id),dn(id)+" (weakest domain)","home")}
+function startGloss(list){const L=list||D.terms;if(D.terms.length<4||!L.length)return tell("Add at least 4 glossary terms first.");
+const qs=L.map(t=>{const dis=shuf(D.terms.filter(x=>x.id!==t.id&&x.d===t.d)).concat(shuf(D.terms.filter(x=>x.id!==t.id&&x.d!==t.d))).slice(0,3),o=shuf([t].concat(dis));return{id:"g_"+t.id,gen:1,q:"Which term matches this meaning? "+t.m,o:o.map(x=>x.t),c:o.indexOf(t),e:"This is the meaning of "+t.t+"."+(t.s?" Example: "+t.s:""),d:t.d,t:"",a:[],m:[]}});
+begin(qs,"Glossary match quiz",V.p==="gl"?"gl":"home")}
+const IA=()=>`<input id="ia" class="gs" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer" value="${esc(st.ans[st.i]||"")}" oninput="idIn(this.value)" onkeydown="if(event.key==='Enter')idEnter()">`,inl=q=>q.t==="fb"&&q.q.includes("____");
+function qhtml(q){if(inl(q)){const i=q.q.indexOf("____");return esc(q.q.slice(0,i))+IA().replace('class="gs"','class="gs" style="display:inline-block;width:11em;margin:0 4px"')+esc(q.q.slice(i+4))}return esc(q.q)}
+const why=q=>st.review&&q.e?"<br><br><b>Why:</b> "+esc(q.e):"";
+function exBlock(q,j){return`<div class="ex">${isOk(q,j)?"<b>Correct.</b> ":"<b>Not quite.</b> You chose: "+esc(show(q,j))+". "}<br><b>Correct answer:</b> ${esc(right(q))}${why(q)}</div>`}
+function quiz(){const q=st.qs[st.i],X=!st.review,n=st.qs.length,ms=q.t==="ms",cur=st.ans[st.i];
+app.innerHTML=`<div class="top"><button onclick="quit()">${X?"Quit":"Exit"}</button><span>${esc(st.n)}${st.review?" (review)":""} &middot; ${st.i+1} of ${n}${X?"":" &middot; score "+st.s}${st.end?' &middot; <b id="tm">'+tfmt()+"</b>":""}</span></div><div class="bar"><i style="width:${st.i/n*100}%"></i></div><div class="q">${qhtml(q)}</div>`+(ms?'<p class="rn">Select all that apply.</p>':"")+
+(isId(q)?(inl(q)?"":IA()):q.o.map((o,j)=>`<button class="o${ms?(cur&&cur.includes(j)?" sel":""):X&&cur===j?" sel":""}" onclick="${ms?"pickM":"pick"}(${j})">${esc(o)}</button>`).join(""))+'<div id="x">'+(X?`<button class="nx alt" onclick="if(st.i>0){st.i--;quiz()}">Back</button><button class="nx" onclick="nextX()">${st.i+1===n?"Finish":"Next"}</button>`:isId(q)?'<button class="nx" onclick="idCheck()">Check answer</button>':ms?'<button class="nx" onclick="msCheck()">Submit answer</button>':"")+'</div>';const ia=g("ia");if(ia)ia.focus()}
+function pickM(j){if(st.a)return;const c=(st.ans[st.i]||[]).slice(),k=c.indexOf(j);k<0?c.push(j):c.splice(k,1);st.ans[st.i]=c.length?c.sort((x,y)=>x-y):null;quiz()}
+function msCheck(){const v=st.ans[st.i];if(v&&!st.a)pick(v)}
+function quit(){const f=()=>{clearT();go(st.bk)};st.review?f():ask("Quit the test? Your answers will be lost.",f)}
+function idIn(v){st.ans[st.i]=v.trim()?v:null}
+function idCheck(){const v=g("ia").value;if(v.trim())pick(v)}
+function idEnter(){st.review?idCheck():nextX()}
+function nextX(){if(st.i+1===st.qs.length){const u=st.qs.length-st.ans.filter(x=>x!=null).length;ask(u?"You have "+u+" unanswered question"+(u===1?"":"s")+". Finish and see your score?":"Finish and see your score?",()=>go("done"))}else{st.i++;quiz()}}
+function pick(j){const q=st.qs[st.i];if(!st.review){st.ans[st.i]=j;return quiz()}if(st.a)return;st.a=true;st.ans[st.i]=j;if(isOk(q,j))st.s++;
+document.querySelectorAll(".o").forEach((b,n)=>{const ms=q.t==="ms";if(ms?q.m.includes(n):n===q.c)b.classList.add("ok");else if(ms?j.includes(n):n===j)b.classList.add("no")});
+const ia=g("ia");if(ia)ia.readOnly=true;const last=st.i+1===st.qs.length;g("x").innerHTML=exBlock(q,j)+`<button class="nx" id="nb" onclick="st.a=false;st.i++;${last?"go('done')":"quiz();window.scrollTo(0,0)"}">${last?"See score":"Next"}</button>`;g("nb").scrollIntoView({block:"nearest"})}
+function done(){clearT();const t=st.qs.length;if(!st.review&&!st.rd){st.rd=1;st.qs.forEach((q,i)=>{if(st.ans[i]!=null)rec(q,isOk(q,st.ans[i]))})}
+let c=0,dm={};st.qs.forEach((q,i)=>{const ok=isOk(q,st.ans[i]);if(ok)c++;const k=q.d||"";dm[k]=dm[k]||[0,0];dm[k][1]++;if(ok)dm[k][0]++});
+const mq=st.qs.filter((q,i)=>!isOk(q,st.ans[i]));
+const G={};st.qs.forEach((q,i)=>{if(!isOk(q,st.ans[i]))(G[q.d||""]=G[q.d||""]||[]).push([q,i])});
+const miss=D.domains.map(d=>d.id).concat([""]).filter(k=>G[k]).map(k=>`<div class="lb">${esc(dn(k))} (${G[k].length})</div>`+G[k].map(([q,i])=>`<div class="ex"><b>${esc(q.q)}</b><br>${st.ans[i]==null?"You skipped this one.":"You chose: "+esc(show(q,st.ans[i]))+"."}<br><b>Correct answer:</b> ${esc(right(q))}${why(q)}</div>`).join("")).join("");
+app.innerHTML=`<h1>${c} / ${t}</h1><p class="s">${Math.round(c/t*100)}% &middot; ${esc(st.n)}${st.up?" &middot; time's up":""}${st.review?" &middot; review mode, not counted toward your metric":""}</p>`+Object.keys(dm).map(k=>`<div>${esc(dn(k))}: ${dm[k][0]}/${dm[k][1]}</div>`).join("")+(st.review?"":readyHTML())+(miss?'<h2>Correct answers for missed or skipped questions</h2>'+miss:"")+(mq.length&&!st.review?'<button class="nx" onclick="reviewMissed()">Review missed with explanations</button>':"")+`<button class="nx" onclick="run(st.o)">Retake</button><button class="nx alt" onclick="go(st.bk)">Back</button>`}
+function reviewMissed(){const l=st.qs.filter((q,i)=>!isOk(q,st.ans[i]));run({list:l,n:st.n+" (missed)",len:l.length,min:0,review:true,bk:st.bk})}
+/* backup */
+function backup(){app.innerHTML=back("home","Home")+`<h1>Backup / new exam</h1><p class="s">Your data is saved in this browser only. Copy the text below to keep a backup, or paste a backup and import it to switch to another exam.</p><textarea id="bk" class="gs" rows="8">${esc(JSON.stringify(D))}</textarea><button class="nx" onclick="imp()">Import pasted data</button><button class="nx del" onclick="wipe()">Start a blank exam</button>`}
+function imp(){let v;try{v=JSON.parse(g("bk").value);if(!v||!Array.isArray(v.domains)||!Array.isArray(v.qs))throw 0}catch(e){return tell("That text is not a valid backup.")}ask("Replace everything currently on this page with the pasted data?",()=>{D=Object.assign(blank(),v);save();go("home")})}
+function wipe(){ask("Erase all domains, questions, sets, terms and progress? Copy a backup first if you want to keep them.",()=>{D=blank();save();go("home")})}
+go("home");
+</script></body></html>
