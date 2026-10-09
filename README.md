@@ -1,5 +1,10 @@
 # exam-preparedness-metric-builder
-A single-page, blank exam-prep template. Enter your own exam's domains, questions, glossary and sets, then practice and track how ready you are. It works for most exams, since nothing is pre-filled.
+
+A single-page, blank exam-prep template. Enter your own exam's domains, questions, glossary and sets, then practice and track how ready you are. It works for most exam, since nothing is pre-filled.
+
+## How it runs
+
+The app is hosted locally on each device. There is no server, account or sign-in, and everything runs in the browser, so it also works without an internet connection. Your questions, glossary and progress are saved on that device only and are not shared or synced. To move to another device or keep a copy, use **Backup / new exam**.
 
 ## Features
 
@@ -30,7 +35,7 @@ A single-page, blank exam-prep template. Enter your own exam's domains, question
 **Other**
 - **Light and dark mode** toggle, with dark as the default. The layout works on phones.
 - **Backup / new exam:** copy your data as text, paste it back to restore it, or start a blank exam for a different subject.
-- **Data storage:** everything is saved in your browser only (local storage), so back it up before clearing site data or switching devices.
+- **Data storage:** data lives in that device's browser (local storage), separate on every device. Back it up before clearing site data.
 
 ## Future plans
 
